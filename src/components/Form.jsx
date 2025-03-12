@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import { FiEye, FiLink } from "react-icons/fi";
 import { MdOutlinePalette } from "react-icons/md";
@@ -31,6 +31,24 @@ const Form = () => {
       required: false,
     },
   ]);
+
+  // Save form state to localStorage
+  useEffect(() => {
+    const savedForm = localStorage.getItem("formState");
+    if (savedForm) {
+      const { title, description, questions } = JSON.parse(savedForm);
+      setTitle(title);
+      setDescription(description);
+      setQuestions(questions);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "formState",
+      JSON.stringify({ title, description, questions })
+    );
+  }, [title, description, questions]);
 
   // Add a new question
   const addQuestion = (type) => {
@@ -90,6 +108,15 @@ const Form = () => {
     );
   };
 
+  // Duplicate a question
+  const duplicateQuestion = (question) => {
+    const newQuestion = {
+      ...question,
+      id: Date.now().toString(), // New unique ID
+    };
+    setQuestions((prev) => [...prev, newQuestion]);
+  };
+
   // Drag and drop logic
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -106,6 +133,16 @@ const Form = () => {
         const newIndex = prev.findIndex((q) => q.id === over.id);
         return arrayMove(prev, oldIndex, newIndex);
       });
+    }
+  };
+
+  // Reset form with confirmation
+  const resetForm = () => {
+    if (window.confirm("Are you sure you want to reset the form?")) {
+      setTitle("Untitled Form");
+      setDescription("Form description");
+      setQuestions([]);
+      localStorage.removeItem("formState");
     }
   };
 
@@ -157,6 +194,7 @@ const Form = () => {
                 addOption={addOption}
                 removeQuestion={removeQuestion}
                 toggleRequired={toggleRequired}
+                duplicateQuestion={duplicateQuestion}
               />
             ))}
           </SortableContext>
@@ -178,7 +216,7 @@ const Form = () => {
         {/* Reset Form Button */}
         <div className="mt-6">
           <button
-            onClick={() => setQuestions([])}
+            onClick={resetForm}
             className="text-red-600 text-sm underline"
           >
             Reset Form
