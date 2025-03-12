@@ -5,6 +5,7 @@ import Error from "./pages/Error";
 import ProtectedRoute from "./ProtectedRoute";
 import Form from "./components/Form";
 import Forms from "./components/Forms"; // Import the new Forms component
+import SingleForm from "./components/SingleForm";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/createform" element={<Form />} /> {/* Create new form */}
           <Route path="/forms" element={<Forms />} /> {/* List of saved forms */}
-          <Route path="/form/:formId" element={<Form />} /> {/* Edit existing form */}
+          <Route path="/form/:formId" element={<SingleForm />} /> {/* Edit existing form */}
         </Route>
 
         {/* Catch-all route for 404 errors */}

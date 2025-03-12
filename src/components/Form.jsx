@@ -1,14 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  FaPlus,
-  FaTrash,
-  FaCopy,
-  FaPalette,
-  FaEye,
-  FaLink,
-  FaEdit,
-  FaSave,
-} from "react-icons/fa";
+import { FaPlus, FaTrash, FaCopy, FaPalette, FaEye, FaLink, FaEdit, FaSave } from "react-icons/fa";
 import {
   DndContext,
   closestCenter,
@@ -30,56 +21,30 @@ import Preview from "./Preview";
 const Form = ({ formId, onSave }) => {
   const [title, setTitle] = useState("Untitled Form");
   const [description, setDescription] = useState("Form description");
-  const [questions, setQuestions] = useState([
-    {
-      id: Date.now().toString(),
-      type: "text",
-      text: "Untitled Question",
-      options: [],
-      required: false,
-    },
-  ]);
+  const [questions, setQuestions] = useState(
+    formId
+      ? [] // Initialize as empty if editing (will be populated in useEffect)
+      : [
+          {
+            id: Date.now().toString(),
+            type: "text",
+            text: "Untitled Question",
+            options: [],
+            required: false,
+          },
+        ]
+  );
   const [isPreview, setIsPreview] = useState(false);
   const [theme, setTheme] = useState("purple");
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const themes = [
-    {
-      name: "Purple",
-      value: "purple",
-      bgColor: "bg-purple-100",
-      headerColor: "bg-purple-600",
-      buttonColor: "bg-purple-500 hover:bg-purple-600",
-    },
-    {
-      name: "Blue",
-      value: "blue",
-      bgColor: "bg-blue-100",
-      headerColor: "bg-blue-600",
-      buttonColor: "bg-blue-500 hover:bg-blue-600",
-    },
-    {
-      name: "Green",
-      value: "green",
-      bgColor: "bg-green-100",
-      headerColor: "bg-green-600",
-      buttonColor: "bg-green-500 hover:bg-green-600",
-    },
-    {
-      name: "Red",
-      value: "red",
-      bgColor: "bg-red-100",
-      headerColor: "bg-red-600",
-      buttonColor: "bg-red-500 hover:bg-red-600",
-    },
-    {
-      name: "Indigo",
-      value: "indigo",
-      bgColor: "bg-indigo-100",
-      headerColor: "bg-indigo-600",
-      buttonColor: "bg-indigo-500 hover:bg-indigo-600",
-    },
+    { name: "Purple", value: "purple", bgColor: "bg-purple-100", headerColor: "bg-purple-600", buttonColor: "bg-purple-500 hover:bg-purple-600" },
+    { name: "Blue", value: "blue", bgColor: "bg-blue-100", headerColor: "bg-blue-600", buttonColor: "bg-blue-500 hover:bg-blue-600" },
+    { name: "Green", value: "green", bgColor: "bg-green-100", headerColor: "bg-green-600", buttonColor: "bg-green-500 hover:bg-green-600" },
+    { name: "Red", value: "red", bgColor: "bg-red-100", headerColor: "bg-red-600", buttonColor: "bg-red-500 hover:bg-red-600" },
+    { name: "Indigo", value: "indigo", bgColor: "bg-indigo-100", headerColor: "bg-indigo-600", buttonColor: "bg-indigo-500 hover:bg-indigo-600" },
   ];
 
   // Load form data if formId is provided
@@ -87,38 +52,18 @@ const Form = ({ formId, onSave }) => {
     if (formId) {
       const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
       const formToEdit = savedForms.find((form) => form.id === formId);
+
       if (formToEdit) {
+        console.log("Form to Edit:", formToEdit); // Debugging
         setTitle(formToEdit.title);
         setDescription(formToEdit.description);
-        setQuestions(formToEdit.questions);
-        setTheme(formToEdit.theme);
+        setQuestions(formToEdit.questions || []); // Ensure questions are loaded
+        setTheme(formToEdit.theme || "purple");
       }
     }
   }, [formId]);
 
   // Save form to local storage
-  // const saveForm = () => {
-  //   const formData = {
-  //     id: formId || Date.now().toString(),
-  //     title,
-  //     description,
-  //     questions,
-  //     theme,
-  //   };
-
-  //   const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
-  //   const existingFormIndex = savedForms.findIndex((form) => form.id === formData.id);
-
-  //   if (existingFormIndex !== -1) {
-  //     savedForms[existingFormIndex] = formData;
-  //   } else {
-  //     savedForms.push(formData);
-  //   }
-
-  //   localStorage.setItem("forms", JSON.stringify(savedForms));
-  //   if (onSave) onSave();
-  // };
-
   const saveForm = () => {
     const formData = {
       id: formId || Date.now().toString(),
@@ -128,10 +73,10 @@ const Form = ({ formId, onSave }) => {
       theme,
     };
 
+    console.log("Form Data to Save:", formData); // Debugging
+
     const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
-    const existingFormIndex = savedForms.findIndex(
-      (form) => form.id === formData.id
-    );
+    const existingFormIndex = savedForms.findIndex((form) => form.id === formData.id);
 
     if (existingFormIndex !== -1) {
       savedForms[existingFormIndex] = formData; // Update existing form
