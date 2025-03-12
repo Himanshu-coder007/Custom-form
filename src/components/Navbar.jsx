@@ -28,22 +28,10 @@ const Navbar = () => {
         <span className="text-xl font-semibold text-gray-800">Forms</span>
       </div>
 
-      {/* Center - Search Bar & Create Form Button Inline */}
-      <div className="flex items-center gap-3 flex-grow max-w-2xl mx-8">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
-        />
+      
 
-        {/* Create Form Button (Inline with Search Bar) */}
-        <button
-          onClick={() => navigate("/createform")}
-          className="bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-blue-700 active:bg-blue-800 transition-all whitespace-nowrap"
-        >
-          + Create Form
-        </button>
-      </div>
+        
+
 
       {/* Right Side - Profile and Logout */}
       <div className="flex items-center gap-4">

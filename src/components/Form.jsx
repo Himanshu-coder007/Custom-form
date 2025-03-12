@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaPlus, FaTrash, FaCopy, FaPalette, FaEye, FaLink, FaEdit } from "react-icons/fa";
+import {
+  FaPlus,
+  FaTrash,
+  FaCopy,
+  FaPalette,
+  FaEye,
+  FaLink,
+  FaEdit,
+  FaSave,
+} from "react-icons/fa";
 import {
   DndContext,
   closestCenter,
@@ -18,7 +27,7 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import SortableQuestion from "./SortableQuestion";
 import Preview from "./Preview";
 
-const Form = () => {
+const Form = ({ formId, onSave }) => {
   const [title, setTitle] = useState("Untitled Form");
   const [description, setDescription] = useState("Form description");
   const [questions, setQuestions] = useState([
@@ -36,12 +45,103 @@ const Form = () => {
   const dropdownRef = useRef(null);
 
   const themes = [
-    { name: "Purple", value: "purple", bgColor: "bg-purple-100", headerColor: "bg-purple-600", buttonColor: "bg-purple-500 hover:bg-purple-600" },
-    { name: "Blue", value: "blue", bgColor: "bg-blue-100", headerColor: "bg-blue-600", buttonColor: "bg-blue-500 hover:bg-blue-600" },
-    { name: "Green", value: "green", bgColor: "bg-green-100", headerColor: "bg-green-600", buttonColor: "bg-green-500 hover:bg-green-600" },
-    { name: "Red", value: "red", bgColor: "bg-red-100", headerColor: "bg-red-600", buttonColor: "bg-red-500 hover:bg-red-600" },
-    { name: "Indigo", value: "indigo", bgColor: "bg-indigo-100", headerColor: "bg-indigo-600", buttonColor: "bg-indigo-500 hover:bg-indigo-600" },
+    {
+      name: "Purple",
+      value: "purple",
+      bgColor: "bg-purple-100",
+      headerColor: "bg-purple-600",
+      buttonColor: "bg-purple-500 hover:bg-purple-600",
+    },
+    {
+      name: "Blue",
+      value: "blue",
+      bgColor: "bg-blue-100",
+      headerColor: "bg-blue-600",
+      buttonColor: "bg-blue-500 hover:bg-blue-600",
+    },
+    {
+      name: "Green",
+      value: "green",
+      bgColor: "bg-green-100",
+      headerColor: "bg-green-600",
+      buttonColor: "bg-green-500 hover:bg-green-600",
+    },
+    {
+      name: "Red",
+      value: "red",
+      bgColor: "bg-red-100",
+      headerColor: "bg-red-600",
+      buttonColor: "bg-red-500 hover:bg-red-600",
+    },
+    {
+      name: "Indigo",
+      value: "indigo",
+      bgColor: "bg-indigo-100",
+      headerColor: "bg-indigo-600",
+      buttonColor: "bg-indigo-500 hover:bg-indigo-600",
+    },
   ];
+
+  // Load form data if formId is provided
+  useEffect(() => {
+    if (formId) {
+      const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
+      const formToEdit = savedForms.find((form) => form.id === formId);
+      if (formToEdit) {
+        setTitle(formToEdit.title);
+        setDescription(formToEdit.description);
+        setQuestions(formToEdit.questions);
+        setTheme(formToEdit.theme);
+      }
+    }
+  }, [formId]);
+
+  // Save form to local storage
+  // const saveForm = () => {
+  //   const formData = {
+  //     id: formId || Date.now().toString(),
+  //     title,
+  //     description,
+  //     questions,
+  //     theme,
+  //   };
+
+  //   const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
+  //   const existingFormIndex = savedForms.findIndex((form) => form.id === formData.id);
+
+  //   if (existingFormIndex !== -1) {
+  //     savedForms[existingFormIndex] = formData;
+  //   } else {
+  //     savedForms.push(formData);
+  //   }
+
+  //   localStorage.setItem("forms", JSON.stringify(savedForms));
+  //   if (onSave) onSave();
+  // };
+
+  const saveForm = () => {
+    const formData = {
+      id: formId || Date.now().toString(),
+      title,
+      description,
+      questions, // Ensure questions are included
+      theme,
+    };
+
+    const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
+    const existingFormIndex = savedForms.findIndex(
+      (form) => form.id === formData.id
+    );
+
+    if (existingFormIndex !== -1) {
+      savedForms[existingFormIndex] = formData; // Update existing form
+    } else {
+      savedForms.push(formData); // Add new form
+    }
+
+    localStorage.setItem("forms", JSON.stringify(savedForms));
+    if (onSave) onSave();
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -95,9 +195,7 @@ const Form = () => {
 
   // Update question text
   const updateQuestionText = (id, text) => {
-    setQuestions((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, text } : q))
-    );
+    setQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, text } : q)));
   };
 
   // Add an option to a question
@@ -181,7 +279,11 @@ const Form = () => {
       {/* Header */}
       <div className="bg-white shadow-md p-4 flex justify-between items-center px-6">
         <div className="flex items-center gap-4">
-          <div className={`${currentTheme.headerColor} text-white p-2 rounded-full`}>📄</div>
+          <div
+            className={`${currentTheme.headerColor} text-white p-2 rounded-full`}
+          >
+            📄
+          </div>
           <input
             type="text"
             value={title}
@@ -213,6 +315,7 @@ const Form = () => {
               </div>
             )}
           </div>
+
           {/* Toggle between Edit and Preview modes */}
           <button
             onClick={() => setIsPreview(!isPreview)}
@@ -220,8 +323,17 @@ const Form = () => {
           >
             {isPreview ? <FaEdit /> : <FaEye />}
           </button>
+
           <FaLink className="text-lg cursor-pointer" />
-          <button className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded`}>
+          <button
+            onClick={saveForm}
+            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded flex items-center gap-2`}
+          >
+            <FaSave /> Save
+          </button>
+          <button
+            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded`}
+          >
             Publish
           </button>
         </div>
@@ -229,36 +341,55 @@ const Form = () => {
 
       {/* Form Body */}
       <div className="max-w-7xl mx-auto flex gap-6 p-6">
-        {/* Left Side: Buttons Column (Sticky and Fixed Height) */}
-        <div className="w-1/4 bg-white p-4 rounded-lg shadow-lg sticky top-0 h-screen overflow-y-auto">
-          <h3 className="text-lg font-semibold mb-4">Add a Question</h3>
-          <div className="flex flex-col gap-2">
-            {["text", "number", "radio", "checkbox", "dropdown", "date", "time", "file"].map((type) => (
+        {/* Left Side: Buttons Column (Hidden in Preview Mode) */}
+        {!isPreview && (
+          <div className="w-1/4 bg-white p-4 rounded-lg shadow-lg sticky top-0 h-screen overflow-y-auto">
+            <h3 className="text-lg font-semibold mb-4">Add a Question</h3>
+            <div className="flex flex-col gap-2">
+              {[
+                "text",
+                "number",
+                "radio",
+                "checkbox",
+                "dropdown",
+                "date",
+                "time",
+                "file",
+              ].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => addQuestion(type)}
+                  className={`flex items-center gap-2 text-white text-sm px-4 py-2 rounded-md ${currentTheme.buttonColor}`}
+                >
+                  <FaPlus /> Add {type.charAt(0).toUpperCase() + type.slice(1)}
+                </button>
+              ))}
+            </div>
+
+            {/* Reset Form Button */}
+            <div className="mt-6">
               <button
-                key={type}
-                onClick={() => addQuestion(type)}
-                className={`flex items-center gap-2 text-white text-sm px-4 py-2 rounded-md ${currentTheme.buttonColor}`}
+                onClick={resetForm}
+                className="text-red-600 text-sm underline"
               >
-                <FaPlus /> Add {type.charAt(0).toUpperCase() + type.slice(1)}
+                Reset Form
               </button>
-            ))}
+            </div>
           </div>
+        )}
 
-          {/* Reset Form Button */}
-          <div className="mt-6">
-            <button
-              onClick={resetForm}
-              className="text-red-600 text-sm underline"
-            >
-              Reset Form
-            </button>
-          </div>
-        </div>
-
-        {/* Right Side: Questions (Scrollable) */}
-        <div className="w-3/4 bg-white p-6 rounded-lg shadow-lg">
+        {/* Right Side: Questions */}
+        <div
+          className={`${
+            isPreview ? "w-full" : "w-3/4"
+          } bg-white p-6 rounded-lg shadow-lg`}
+        >
           {isPreview ? (
-            <Preview title={title} description={description} questions={questions} />
+            <Preview
+              title={title}
+              description={description}
+              questions={questions}
+            />
           ) : (
             <>
               {/* Form Title and Description */}
@@ -284,7 +415,10 @@ const Form = () => {
                 onDragEnd={handleDragEnd}
                 modifiers={[restrictToVerticalAxis]}
               >
-                <SortableContext items={questions} strategy={verticalListSortingStrategy}>
+                <SortableContext
+                  items={questions}
+                  strategy={verticalListSortingStrategy}
+                >
                   {questions.map((question) => (
                     <SortableQuestion
                       key={question.id}
