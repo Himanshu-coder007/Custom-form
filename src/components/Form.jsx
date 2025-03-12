@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaPlus } from "react-icons/fa";
 import { FiEye, FiLink, FiEdit } from "react-icons/fi";
 import { MdOutlinePalette } from "react-icons/md";
@@ -18,7 +18,7 @@ import {
 } from "@dnd-kit/sortable";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import SortableQuestion from "./SortableQuestion";
-import Preview from "./Preview"; // Import the Preview component
+import Preview from "./Preview";
 
 const Form = () => {
   const [title, setTitle] = useState("Untitled Form");
@@ -32,30 +32,56 @@ const Form = () => {
       required: false,
     },
   ]);
-  const [isPreview, setIsPreview] = useState(false); // State to toggle between edit and preview modes
+  const [isPreview, setIsPreview] = useState(false);
+  const [theme, setTheme] = useState("purple");
+  const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const themes = [
+    { name: "Purple", value: "purple", bgColor: "bg-purple-100", headerColor: "bg-purple-600" },
+    { name: "Blue", value: "blue", bgColor: "bg-blue-100", headerColor: "bg-blue-600" },
+    { name: "Green", value: "green", bgColor: "bg-green-100", headerColor: "bg-green-600" },
+    { name: "Red", value: "red", bgColor: "bg-red-100", headerColor: "bg-red-600" },
+    { name: "Indigo", value: "indigo", bgColor: "bg-indigo-100", headerColor: "bg-indigo-600" },
+  ];
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsThemeDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Save form state to localStorage
   useEffect(() => {
     const savedForm = localStorage.getItem("formState");
     if (savedForm) {
-      const { title, description, questions } = JSON.parse(savedForm);
+      const { title, description, questions, theme } = JSON.parse(savedForm);
       setTitle(title);
       setDescription(description);
       setQuestions(questions);
+      setTheme(theme || "purple");
     }
   }, []);
 
   useEffect(() => {
     localStorage.setItem(
       "formState",
-      JSON.stringify({ title, description, questions })
+      JSON.stringify({ title, description, questions, theme })
     );
-  }, [title, description, questions]);
+  }, [title, description, questions, theme]);
 
   // Add a new question
   const addQuestion = (type) => {
     const newQuestion = {
-      id: Date.now().toString(), // Unique ID for each question
+      id: Date.now().toString(),
       type,
       text: "Untitled Question",
       options: type === "text" || type === "number" ? [] : ["Option 1"],
@@ -114,7 +140,7 @@ const Form = () => {
   const duplicateQuestion = (question) => {
     const newQuestion = {
       ...question,
-      id: Date.now().toString(), // New unique ID
+      id: Date.now().toString(),
     };
     setQuestions((prev) => [...prev, newQuestion]);
   };
@@ -127,7 +153,7 @@ const Form = () => {
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (!over) return; // Prevent errors if dragged outside
+    if (!over) return;
 
     if (active.id !== over.id) {
       setQuestions((prev) => {
@@ -144,16 +170,20 @@ const Form = () => {
       setTitle("Untitled Form");
       setDescription("Form description");
       setQuestions([]);
+      setTheme("purple");
       localStorage.removeItem("formState");
     }
   };
 
+  // Get the current theme colors
+  const currentTheme = themes.find((t) => t.value === theme);
+
   return (
-    <div className="bg-purple-100 min-h-screen">
+    <div className={`${currentTheme.bgColor} min-h-screen`}>
       {/* Header */}
       <div className="bg-white shadow-md p-4 flex justify-between items-center px-6">
         <div className="flex items-center gap-4">
-          <div className="bg-purple-600 text-white p-2 rounded-full">📄</div>
+          <div className={`${currentTheme.headerColor} text-white p-2 rounded-full`}>📄</div>
           <input
             type="text"
             value={title}
@@ -162,7 +192,29 @@ const Form = () => {
           />
         </div>
         <div className="flex items-center gap-6 text-gray-600">
-          <MdOutlinePalette className="text-lg cursor-pointer" />
+          {/* Theme Selector */}
+          <div className="relative" ref={dropdownRef}>
+            <MdOutlinePalette
+              className="text-lg cursor-pointer"
+              onClick={() => setIsThemeDropdownOpen((prev) => !prev)}
+            />
+            {isThemeDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
+                {themes.map((t) => (
+                  <div
+                    key={t.value}
+                    onClick={() => {
+                      setTheme(t.value);
+                      setIsThemeDropdownOpen(false);
+                    }}
+                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    {t.name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           {/* Toggle between Edit and Preview modes */}
           <button
             onClick={() => setIsPreview(!isPreview)}
@@ -171,7 +223,7 @@ const Form = () => {
             {isPreview ? <FiEdit /> : <FiEye />}
           </button>
           <FiLink className="text-lg cursor-pointer" />
-          <button className="bg-purple-600 text-white px-4 py-1 rounded">
+          <button className={`${currentTheme.headerColor} text-white px-4 py-1 rounded`}>
             Publish
           </button>
         </div>
@@ -180,10 +232,8 @@ const Form = () => {
       {/* Form Body */}
       <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-6">
         {isPreview ? (
-          // Preview Mode
           <Preview title={title} description={description} questions={questions} />
         ) : (
-          // Edit Mode
           <>
             <input
               type="text"
