@@ -27,6 +27,14 @@ const Preview = ({ title, description, questions }) => {
     });
   };
 
+  // Handle file uploads
+  const handleFileChange = (questionId, files) => {
+    setResponses((prev) => ({
+      ...prev,
+      [questionId]: files,
+    }));
+  };
+
   return (
     <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-6">
       {/* Form Title */}
@@ -125,6 +133,35 @@ const Preview = ({ title, description, questions }) => {
                 </option>
               ))}
             </select>
+          )}
+          {question.type === "date" && (
+            <input
+              type="date"
+              className="w-full p-2 border-b focus:outline-none"
+              value={responses[question.id] || ""}
+              onChange={(e) =>
+                handleResponseChange(question.id, e.target.value)
+              }
+            />
+          )}
+          {question.type === "time" && (
+            <input
+              type="time"
+              className="w-full p-2 border-b focus:outline-none"
+              value={responses[question.id] || ""}
+              onChange={(e) =>
+                handleResponseChange(question.id, e.target.value)
+              }
+            />
+          )}
+          {question.type === "file" && (
+            <input
+              type="file"
+              className="w-full p-2 border-b focus:outline-none"
+              onChange={(e) =>
+                handleFileChange(question.id, e.target.files)
+              }
+            />
           )}
         </div>
       ))}

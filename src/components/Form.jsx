@@ -229,8 +229,8 @@ const Form = () => {
 
       {/* Form Body */}
       <div className="max-w-7xl mx-auto flex gap-6 p-6">
-        {/* Left Side: Buttons Column */}
-        <div className="w-1/4 bg-white p-4 rounded-lg shadow-lg">
+        {/* Left Side: Buttons Column (Sticky and Fixed Height) */}
+        <div className="w-1/4 bg-white p-4 rounded-lg shadow-lg sticky top-0 h-screen overflow-y-auto">
           <h3 className="text-lg font-semibold mb-4">Add a Question</h3>
           <div className="flex flex-col gap-2">
             {["text", "number", "radio", "checkbox", "dropdown", "date", "time", "file"].map((type) => (
@@ -255,7 +255,7 @@ const Form = () => {
           </div>
         </div>
 
-        {/* Right Side: Questions */}
+        {/* Right Side: Questions (Scrollable) */}
         <div className="w-3/4 bg-white p-6 rounded-lg shadow-lg">
           {isPreview ? (
             <Preview title={title} description={description} questions={questions} />

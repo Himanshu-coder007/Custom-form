@@ -87,6 +87,36 @@ const Question = ({
         </div>
       )}
 
+      {/* Date Input */}
+      {question.type === "date" && (
+        <input
+          type="date"
+          placeholder="Date"
+          className="w-full p-2 border-b focus:outline-none mt-2"
+          disabled
+        />
+      )}
+
+      {/* Time Input */}
+      {question.type === "time" && (
+        <input
+          type="time"
+          placeholder="Time"
+          className="w-full p-2 border-b focus:outline-none mt-2"
+          disabled
+        />
+      )}
+
+      {/* File Input */}
+      {question.type === "file" && (
+        <input
+          type="file"
+          placeholder="File"
+          className="w-full p-2 border-b focus:outline-none mt-2"
+          disabled
+        />
+      )}
+
       {/* Action Buttons */}
       <div className="flex justify-between items-center mt-4">
         <div className="flex items-center gap-3">
