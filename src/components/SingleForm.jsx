@@ -65,7 +65,7 @@ const SingleForm = () => {
     }
 
     localStorage.setItem("forms", JSON.stringify(savedForms));
-    navigate("/forms"); // Redirect to the forms list after saving
+    navigate("/dashboard"); // Redirect to the forms list after saving
   };
 
   // Publish form

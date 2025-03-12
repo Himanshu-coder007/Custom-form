@@ -26,6 +26,14 @@ const Respond = () => {
     }));
   };
 
+  // Handle file upload
+  const handleFileUpload = (questionId, files) => {
+    setResponses((prev) => ({
+      ...prev,
+      [questionId]: files,
+    }));
+  };
+
   // Submit the form responses
   const submitResponses = () => {
     const formResponses = {
@@ -124,6 +132,31 @@ const Respond = () => {
                   </option>
                 ))}
               </select>
+            )}
+            {question.type === "date" && (
+              <input
+                type="date"
+                onChange={(e) => handleResponseChange(question.id, e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                required={question.required}
+              />
+            )}
+            {question.type === "time" && (
+              <input
+                type="time"
+                onChange={(e) => handleResponseChange(question.id, e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                required={question.required}
+              />
+            )}
+            {question.type === "file" && (
+              <input
+                type="file"
+                onChange={(e) => handleFileUpload(question.id, e.target.files)}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                required={question.required}
+                multiple={question.multiple || false}
+              />
             )}
           </div>
         ))}
