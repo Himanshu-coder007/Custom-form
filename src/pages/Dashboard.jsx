@@ -1,10 +1,16 @@
-import Navbar from "../components/Navbar"; 
+import React from "react";
+import Navbar from "../components/Navbar";
 
-const Dashboard = () => {
+const Dashboard = ({ backgroundColor }) => {
   return (
-    <div>
+    <div className="min-h-screen">
       <Navbar />
-      <h1 className="text-center mt-10 text-2xl font-semibold">Welcome to the Dashboard</h1>
+      {/* Add padding to prevent overlap */}
+      <div className="pt-20">
+        <h1 className="text-center text-2xl font-semibold">
+          Welcome to the Dashboard
+        </h1>
+      </div>
     </div>
   );
 };

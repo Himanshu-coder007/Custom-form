@@ -1,11 +1,11 @@
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { useAuthState } from "react-firebase-hooks/auth"; // ✅ Add this line
+import { useAuthState } from "react-firebase-hooks/auth";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [user] = useAuthState(auth); // ✅ Now it will work
+  const [user] = useAuthState(auth);
 
   const handleLogout = async () => {
     try {
@@ -17,24 +17,32 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-md p-4 flex items-center justify-between">
+    <nav className="bg-white shadow-lg p-4 flex items-center justify-between fixed top-0 left-0 right-0 z-50">
       {/* Left Side - Google Forms Logo and Title */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9IoYXB94gHIWE0REzxZNPPw9thxc53pTwPQ&s"
+          src="https://www.gstatic.com/images/branding/product/2x/forms_2020q4_48dp.png"
           alt="Google Forms Logo"
-          className="h-8 w-8"
+          className="h-10 w-10"
         />
-        <span className="text-lg font-semibold text-gray-700">Forms</span>
+        <span className="text-xl font-semibold text-gray-800">Forms</span>
       </div>
 
-      {/* Center - Search Bar */}
-      <div className="flex-grow mx-6">
+      {/* Center - Search Bar & Create Form Button Inline */}
+      <div className="flex items-center gap-3 flex-grow max-w-2xl mx-8">
         <input
           type="text"
           placeholder="Search..."
-          className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
         />
+
+        {/* Create Form Button (Inline with Search Bar) */}
+        <button
+          onClick={() => navigate("/createform")}
+          className="bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-blue-700 active:bg-blue-800 transition-all whitespace-nowrap"
+        >
+          + Create Form
+        </button>
       </div>
 
       {/* Right Side - Profile and Logout */}
@@ -43,18 +51,30 @@ const Navbar = () => {
           <img
             src={user.photoURL}
             alt="Profile"
-            className="h-10 w-10 rounded-full border"
+            className="h-10 w-10 rounded-full border-2 border-purple-500 hover:border-purple-600 transition-all cursor-pointer"
           />
         ) : (
-          <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-            <span className="text-gray-600">?</span>
+          <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 transition-all cursor-pointer">
+            <span className="text-gray-600 text-lg font-medium">?</span>
           </div>
         )}
 
         <button
           onClick={handleLogout}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+          className="bg-red-500 text-white px-5 py-2 rounded-md text-sm font-medium hover:bg-red-600 active:bg-red-700 transition-all flex items-center gap-2"
         >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+              clipRule="evenodd"
+            />
+          </svg>
           Logout
         </button>
       </div>
