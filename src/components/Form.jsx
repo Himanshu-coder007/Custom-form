@@ -1,14 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  FaPlus,
-  FaTrash,
-  FaCopy,
-  FaPalette,
-  FaEye,
-  FaLink,
-  FaEdit,
-  FaSave,
-} from "react-icons/fa";
+import { FaPlus, FaTrash, FaCopy, FaPalette, FaEye, FaLink, FaEdit, FaSave } from "react-icons/fa";
 import {
   DndContext,
   closestCenter,
@@ -46,61 +37,53 @@ const Form = ({ formId, onSave }) => {
   const [isPreview, setIsPreview] = useState(false);
   const [theme, setTheme] = useState("purple");
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
+  const [isPublished, setIsPublished] = useState(false); 
+  const [publishedLink, setPublishedLink] = useState("");
   const dropdownRef = useRef(null);
 
   const themes = [
-    {
-      name: "Purple",
-      value: "purple",
-      bgColor: "bg-purple-100",
-      headerColor: "bg-purple-600",
-      buttonColor: "bg-purple-500 hover:bg-purple-600",
-    },
-    {
-      name: "Blue",
-      value: "blue",
-      bgColor: "bg-blue-100",
-      headerColor: "bg-blue-600",
-      buttonColor: "bg-blue-500 hover:bg-blue-600",
-    },
-    {
-      name: "Green",
-      value: "green",
-      bgColor: "bg-green-100",
-      headerColor: "bg-green-600",
-      buttonColor: "bg-green-500 hover:bg-green-600",
-    },
-    {
-      name: "Red",
-      value: "red",
-      bgColor: "bg-red-100",
-      headerColor: "bg-red-600",
-      buttonColor: "bg-red-500 hover:bg-red-600",
-    },
-    {
-      name: "Indigo",
-      value: "indigo",
-      bgColor: "bg-indigo-100",
-      headerColor: "bg-indigo-600",
-      buttonColor: "bg-indigo-500 hover:bg-indigo-600",
-    },
+    { name: "Purple", value: "purple", bgColor: "bg-purple-100", headerColor: "bg-purple-600", buttonColor: "bg-purple-500 hover:bg-purple-600" },
+    { name: "Blue", value: "blue", bgColor: "bg-blue-100", headerColor: "bg-blue-600", buttonColor: "bg-blue-500 hover:bg-blue-600" },
+    { name: "Green", value: "green", bgColor: "bg-green-100", headerColor: "bg-green-600", buttonColor: "bg-green-500 hover:bg-green-600" },
+    { name: "Red", value: "red", bgColor: "bg-red-100", headerColor: "bg-red-600", buttonColor: "bg-red-500 hover:bg-red-600" },
+    { name: "Indigo", value: "indigo", bgColor: "bg-indigo-100", headerColor: "bg-indigo-600", buttonColor: "bg-indigo-500 hover:bg-indigo-600" },
   ];
 
   // Load form data if formId is provided
-  useEffect(() => {
-    if (formId) {
-      const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
-      const formToEdit = savedForms.find((form) => form.id === formId);
+  // useEffect(() => {
+  //   if (formId) {
+  //     const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
+  //     const formToEdit = savedForms.find((form) => form.id === formId);
 
-      if (formToEdit) {
-        console.log("Form to Edit:", formToEdit); // Debugging
-        setTitle(formToEdit.title);
-        setDescription(formToEdit.description);
-        setQuestions(formToEdit.questions || []); // Ensure questions are loaded
-        setTheme(formToEdit.theme || "purple");
+  //     if (formToEdit) {
+  //       console.log("Form to Edit:", formToEdit); // Debugging
+  //       setTitle(formToEdit.title);
+  //       setDescription(formToEdit.description);
+  //       setQuestions(formToEdit.questions || []); // Ensure questions are loaded
+  //       setTheme(formToEdit.theme || "purple");
+  //     }
+  //   }
+  // }, [formId]);
+  // Load form data if formId is provided
+useEffect(() => {
+  if (formId) {
+    const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
+    const formToEdit = savedForms.find((form) => form.id === formId);
+
+    if (formToEdit) {
+      setTitle(formToEdit.title);
+      setDescription(formToEdit.description);
+      setQuestions(formToEdit.questions || []);
+      setTheme(formToEdit.theme || "purple");
+      setIsPublished(formToEdit.published || false);
+
+      // Set the published link if the form is already published
+      if (formToEdit.published) {
+        setPublishedLink(`http://localhost:5147/respond/${formId}`);
       }
     }
-  }, [formId]);
+  }
+}, [formId]);
 
   // Save form to local storage
   const saveForm = () => {
@@ -115,9 +98,7 @@ const Form = ({ formId, onSave }) => {
     console.log("Form Data to Save:", formData); // Debugging
 
     const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
-    const existingFormIndex = savedForms.findIndex(
-      (form) => form.id === formData.id
-    );
+    const existingFormIndex = savedForms.findIndex((form) => form.id === formData.id);
 
     if (existingFormIndex !== -1) {
       savedForms[existingFormIndex] = formData; // Update existing form
@@ -154,6 +135,114 @@ const Form = ({ formId, onSave }) => {
       setTheme(theme || "purple");
     }
   }, []);
+
+  // Publish the form
+  // const publishForm = () => {
+  //   if (!title || !description || questions.length === 0) {
+  //     alert("Please add a title, description, and at least one question before publishing.");
+  //     return;
+  //   }
+
+  //   const formData = {
+  //     id: formId || Date.now().toString(),
+  //     title,
+  //     description,
+  //     questions,
+  //     theme,
+  //     published: true, // Mark as published
+  //   };
+
+  //   // Save to publishedForms
+  //   const publishedForms = JSON.parse(localStorage.getItem("publishedForms")) || [];
+  //   const existingFormIndex = publishedForms.findIndex((form) => form.id === formData.id);
+
+  //   if (existingFormIndex !== -1) {
+  //     publishedForms[existingFormIndex] = formData; // Update existing published form
+  //   } else {
+  //     publishedForms.push(formData); // Add new published form
+  //   }
+
+  //   localStorage.setItem("publishedForms", JSON.stringify(publishedForms));
+
+  //   // Save to forms (to update published status)
+  //   const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
+  //   const existingFormIndexInForms = savedForms.findIndex((form) => form.id === formData.id);
+
+  //   if (existingFormIndexInForms !== -1) {
+  //     savedForms[existingFormIndexInForms] = formData; // Update existing form
+  //   } else {
+  //     savedForms.push(formData); // Add new form
+  //   }
+
+  //   localStorage.setItem("forms", JSON.stringify(savedForms));
+
+  //   setIsPublished(true); // Update published status in state
+  //   alert("Form published successfully!");
+  // };
+
+  // Publish the form
+const publishForm = () => {
+  if (!title || !description || questions.length === 0) {
+    alert("Please add a title, description, and at least one question before publishing.");
+    return;
+  }
+
+  const formData = {
+    id: formId || Date.now().toString(),
+    title,
+    description,
+    questions,
+    theme,
+    published: true, // Mark as published
+  };
+
+  // Save to publishedForms
+  const publishedForms = JSON.parse(localStorage.getItem("publishedForms")) || [];
+  const existingFormIndex = publishedForms.findIndex((form) => form.id === formData.id);
+
+  if (existingFormIndex !== -1) {
+    publishedForms[existingFormIndex] = formData; // Update existing published form
+  } else {
+    publishedForms.push(formData); // Add new published form
+  }
+
+  localStorage.setItem("publishedForms", JSON.stringify(publishedForms));
+
+  // Save to forms (to update published status)
+  const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
+  const existingFormIndexInForms = savedForms.findIndex((form) => form.id === formData.id);
+
+  if (existingFormIndexInForms !== -1) {
+    savedForms[existingFormIndexInForms] = formData; // Update existing form
+  } else {
+    savedForms.push(formData); // Add new form
+  }
+
+  localStorage.setItem("forms", JSON.stringify(savedForms));
+
+  setIsPublished(true); // Update published status in state
+  setPublishedLink(`http://localhost:5147/respond/${formData.id}`); // Set the published link
+  alert("Form published successfully!");
+};
+
+  // Copy the published link to clipboard
+  // const copyLinkToClipboard = () => {
+  //   if (publishedLink) {
+  //     navigator.clipboard.writeText(publishedLink);
+  //     alert("Link copied to clipboard!");
+  //   } else {
+  //     alert("Form is not published yet.");
+  //   }
+  // };
+  // Copy the published link to clipboard
+const copyLinkToClipboard = () => {
+  if (isPublished && publishedLink) {
+    navigator.clipboard.writeText(publishedLink);
+    alert("Link copied to clipboard!");
+  } else {
+    alert("Form is not published yet.");
+  }
+};
 
   useEffect(() => {
     localStorage.setItem(
@@ -310,12 +399,27 @@ const Form = ({ formId, onSave }) => {
             {isPreview ? <FaEdit /> : <FaEye />}
           </button>
 
-          <FaLink className="text-lg cursor-pointer" />
+          {/* Copy Link Button */}
+          <button
+            onClick={copyLinkToClipboard}
+            className="text-lg cursor-pointer"
+            title="Copy Link"
+          >
+            <FaLink />
+          </button>
+
           <button
             onClick={saveForm}
             className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded flex items-center gap-2`}
           >
             <FaSave /> Save
+          </button>
+          <button
+            onClick={publishForm}
+            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded`}
+            disabled={isPublished} // Disable if already published
+          >
+            {isPublished ? "Published" : "Publish"}
           </button>
         </div>
       </div>

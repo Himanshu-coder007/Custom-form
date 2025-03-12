@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaSave, FaPlus, FaPalette, FaLink, FaEye, FaEdit } from "react-icons/fa"; // Import required icons
+import {
+  FaSave,
+  FaPlus,
+  FaPalette,
+  FaLink,
+  FaEye,
+  FaEdit,
+} from "react-icons/fa"; // Import required icons
 import {
   DndContext,
   closestCenter,
@@ -28,9 +35,23 @@ const SingleForm = () => {
   const [theme, setTheme] = useState("purple");
   const [isPreview, setIsPreview] = useState(false); // State for preview mode
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
+  const [publishedLink, setPublishedLink] = useState("");
   const dropdownRef = useRef(null);
 
   // Load form data when the component mounts
+  //   useEffect(() => {
+  //     const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
+  //     const formToEdit = savedForms.find((form) => form.id === formId);
+
+  //     if (formToEdit) {
+  //       setTitle(formToEdit.title);
+  //       setDescription(formToEdit.description);
+  //       setQuestions(formToEdit.questions || []);
+  //       setTheme(formToEdit.theme || "purple");
+  //     } else {
+  //       navigate("/forms"); // Redirect if the form is not found
+  //     }
+  //   }, [formId, navigate]);
   useEffect(() => {
     const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
     const formToEdit = savedForms.find((form) => form.id === formId);
@@ -40,6 +61,14 @@ const SingleForm = () => {
       setDescription(formToEdit.description);
       setQuestions(formToEdit.questions || []);
       setTheme(formToEdit.theme || "purple");
+
+      // Load published link if the form is already published
+      const publishedForms =
+        JSON.parse(localStorage.getItem("publishedForms")) || [];
+      const publishedForm = publishedForms.find((form) => form.id === formId);
+      if (publishedForm) {
+        setPublishedLink(publishedForm.link);
+      }
     } else {
       navigate("/forms"); // Redirect if the form is not found
     }
@@ -56,7 +85,9 @@ const SingleForm = () => {
     };
 
     const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
-    const existingFormIndex = savedForms.findIndex((form) => form.id === formId);
+    const existingFormIndex = savedForms.findIndex(
+      (form) => form.id === formId
+    );
 
     if (existingFormIndex !== -1) {
       savedForms[existingFormIndex] = formData; // Update existing form
@@ -69,6 +100,29 @@ const SingleForm = () => {
   };
 
   // Publish form
+  //   const publishForm = () => {
+  //     const formData = {
+  //       id: formId,
+  //       title,
+  //       description,
+  //       questions,
+  //       theme,
+  //       published: true, // Mark the form as published
+  //       link: `http://localhost:5173/respond/${formId}`, // Unique link for the form
+  //     };
+
+  //     const publishedForms = JSON.parse(localStorage.getItem("publishedForms")) || [];
+  //     const existingFormIndex = publishedForms.findIndex((form) => form.id === formId);
+
+  //     if (existingFormIndex !== -1) {
+  //       publishedForms[existingFormIndex] = formData; // Update existing published form
+  //     } else {
+  //       publishedForms.push(formData); // Add new published form
+  //     }
+
+  //     localStorage.setItem("publishedForms", JSON.stringify(publishedForms));
+  //     alert("Form published successfully! Share this link: " + formData.link);
+  //   };
   const publishForm = () => {
     const formData = {
       id: formId,
@@ -80,8 +134,11 @@ const SingleForm = () => {
       link: `http://localhost:5173/respond/${formId}`, // Unique link for the form
     };
 
-    const publishedForms = JSON.parse(localStorage.getItem("publishedForms")) || [];
-    const existingFormIndex = publishedForms.findIndex((form) => form.id === formId);
+    const publishedForms =
+      JSON.parse(localStorage.getItem("publishedForms")) || [];
+    const existingFormIndex = publishedForms.findIndex(
+      (form) => form.id === formId
+    );
 
     if (existingFormIndex !== -1) {
       publishedForms[existingFormIndex] = formData; // Update existing published form
@@ -90,7 +147,18 @@ const SingleForm = () => {
     }
 
     localStorage.setItem("publishedForms", JSON.stringify(publishedForms));
+
+    setPublishedLink(formData.link); // Set the published link in state
     alert("Form published successfully! Share this link: " + formData.link);
+  };
+
+  const copyLinkToClipboard = () => {
+    if (publishedLink) {
+      navigator.clipboard.writeText(publishedLink);
+      alert("Link copied to clipboard: " + publishedLink);
+    } else {
+      alert("Form is not published yet.");
+    }
   };
 
   // Add a new question
@@ -112,9 +180,7 @@ const SingleForm = () => {
 
   // Update question text
   const updateQuestionText = (id, text) => {
-    setQuestions((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, text } : q))
-    );
+    setQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, text } : q)));
   };
 
   // Add an option to a question
@@ -195,11 +261,41 @@ const SingleForm = () => {
 
   // Get the current theme colors
   const themes = [
-    { name: "Purple", value: "purple", bgColor: "bg-purple-100", headerColor: "bg-purple-600", buttonColor: "bg-purple-500 hover:bg-purple-600" },
-    { name: "Blue", value: "blue", bgColor: "bg-blue-100", headerColor: "bg-blue-600", buttonColor: "bg-blue-500 hover:bg-blue-600" },
-    { name: "Green", value: "green", bgColor: "bg-green-100", headerColor: "bg-green-600", buttonColor: "bg-green-500 hover:bg-green-600" },
-    { name: "Red", value: "red", bgColor: "bg-red-100", headerColor: "bg-red-600", buttonColor: "bg-red-500 hover:bg-red-600" },
-    { name: "Indigo", value: "indigo", bgColor: "bg-indigo-100", headerColor: "bg-indigo-600", buttonColor: "bg-indigo-500 hover:bg-indigo-600" },
+    {
+      name: "Purple",
+      value: "purple",
+      bgColor: "bg-purple-100",
+      headerColor: "bg-purple-600",
+      buttonColor: "bg-purple-500 hover:bg-purple-600",
+    },
+    {
+      name: "Blue",
+      value: "blue",
+      bgColor: "bg-blue-100",
+      headerColor: "bg-blue-600",
+      buttonColor: "bg-blue-500 hover:bg-blue-600",
+    },
+    {
+      name: "Green",
+      value: "green",
+      bgColor: "bg-green-100",
+      headerColor: "bg-green-600",
+      buttonColor: "bg-green-500 hover:bg-green-600",
+    },
+    {
+      name: "Red",
+      value: "red",
+      bgColor: "bg-red-100",
+      headerColor: "bg-red-600",
+      buttonColor: "bg-red-500 hover:bg-red-600",
+    },
+    {
+      name: "Indigo",
+      value: "indigo",
+      bgColor: "bg-indigo-100",
+      headerColor: "bg-indigo-600",
+      buttonColor: "bg-indigo-500 hover:bg-indigo-600",
+    },
   ];
 
   const currentTheme = themes.find((t) => t.value === theme);
@@ -209,7 +305,11 @@ const SingleForm = () => {
       {/* Header */}
       <div className="bg-white shadow-md p-4 flex justify-between items-center px-6">
         <div className="flex items-center gap-4">
-          <div className={`${currentTheme.headerColor} text-white p-2 rounded-full`}>📄</div>
+          <div
+            className={`${currentTheme.headerColor} text-white p-2 rounded-full`}
+          >
+            📄
+          </div>
           <input
             type="text"
             value={title}
@@ -251,7 +351,13 @@ const SingleForm = () => {
           </button>
 
           {/* Link Button */}
-          <FaLink className="text-lg cursor-pointer" />
+          <button
+            onClick={copyLinkToClipboard} // Call copyLinkToClipboard when clicked
+            className="text-lg cursor-pointer"
+            title="Copy Link"
+          >
+            <FaLink />
+          </button>
 
           {/* Publish Button */}
           <button
@@ -278,7 +384,16 @@ const SingleForm = () => {
           <div className="w-1/4 bg-white p-4 rounded-lg shadow-lg sticky top-0 h-screen overflow-y-auto">
             <h3 className="text-lg font-semibold mb-4">Add a Question</h3>
             <div className="flex flex-col gap-2">
-              {["text", "number", "radio", "checkbox", "dropdown", "date", "time", "file"].map((type) => (
+              {[
+                "text",
+                "number",
+                "radio",
+                "checkbox",
+                "dropdown",
+                "date",
+                "time",
+                "file",
+              ].map((type) => (
                 <button
                   key={type}
                   onClick={() => addQuestion(type)}
@@ -292,7 +407,11 @@ const SingleForm = () => {
         )}
 
         {/* Right Side: Questions */}
-        <div className={`${isPreview ? "w-full" : "w-3/4"} bg-white p-6 rounded-lg shadow-lg`}>
+        <div
+          className={`${
+            isPreview ? "w-full" : "w-3/4"
+          } bg-white p-6 rounded-lg shadow-lg`}
+        >
           {isPreview ? (
             <Preview
               title={title}
@@ -324,7 +443,10 @@ const SingleForm = () => {
                 onDragEnd={handleDragEnd}
                 modifiers={[restrictToVerticalAxis]}
               >
-                <SortableContext items={questions} strategy={verticalListSortingStrategy}>
+                <SortableContext
+                  items={questions}
+                  strategy={verticalListSortingStrategy}
+                >
                   {questions.map((question) => (
                     <SortableQuestion
                       key={question.id}
