@@ -17,7 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import Question from "./Question";
+import SortableQuestion from "./SortableQuestion";
 
 const Form = () => {
   const [title, setTitle] = useState("Untitled Form");
@@ -186,7 +186,7 @@ const Form = () => {
         >
           <SortableContext items={questions} strategy={verticalListSortingStrategy}>
             {questions.map((question) => (
-              <Question
+              <SortableQuestion
                 key={question.id}
                 question={question}
                 updateQuestionText={updateQuestionText}
