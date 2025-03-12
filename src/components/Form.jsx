@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaPlus } from "react-icons/fa";
-import { FiEye, FiLink, FiEdit } from "react-icons/fi";
-import { MdOutlinePalette } from "react-icons/md";
+import { FaPlus, FaTrash, FaCopy, FaPalette, FaEye, FaLink, FaEdit } from "react-icons/fa";
 import {
   DndContext,
   closestCenter,
@@ -38,11 +36,11 @@ const Form = () => {
   const dropdownRef = useRef(null);
 
   const themes = [
-    { name: "Purple", value: "purple", bgColor: "bg-purple-100", headerColor: "bg-purple-600" },
-    { name: "Blue", value: "blue", bgColor: "bg-blue-100", headerColor: "bg-blue-600" },
-    { name: "Green", value: "green", bgColor: "bg-green-100", headerColor: "bg-green-600" },
-    { name: "Red", value: "red", bgColor: "bg-red-100", headerColor: "bg-red-600" },
-    { name: "Indigo", value: "indigo", bgColor: "bg-indigo-100", headerColor: "bg-indigo-600" },
+    { name: "Purple", value: "purple", bgColor: "bg-purple-100", headerColor: "bg-purple-600", buttonColor: "bg-purple-500 hover:bg-purple-600" },
+    { name: "Blue", value: "blue", bgColor: "bg-blue-100", headerColor: "bg-blue-600", buttonColor: "bg-blue-500 hover:bg-blue-600" },
+    { name: "Green", value: "green", bgColor: "bg-green-100", headerColor: "bg-green-600", buttonColor: "bg-green-500 hover:bg-green-600" },
+    { name: "Red", value: "red", bgColor: "bg-red-100", headerColor: "bg-red-600", buttonColor: "bg-red-500 hover:bg-red-600" },
+    { name: "Indigo", value: "indigo", bgColor: "bg-indigo-100", headerColor: "bg-indigo-600", buttonColor: "bg-indigo-500 hover:bg-indigo-600" },
   ];
 
   // Close dropdown when clicking outside
@@ -194,7 +192,7 @@ const Form = () => {
         <div className="flex items-center gap-6 text-gray-600">
           {/* Theme Selector */}
           <div className="relative" ref={dropdownRef}>
-            <MdOutlinePalette
+            <FaPalette
               className="text-lg cursor-pointer"
               onClick={() => setIsThemeDropdownOpen((prev) => !prev)}
             />
@@ -220,74 +218,90 @@ const Form = () => {
             onClick={() => setIsPreview(!isPreview)}
             className="text-lg cursor-pointer"
           >
-            {isPreview ? <FiEdit /> : <FiEye />}
+            {isPreview ? <FaEdit /> : <FaEye />}
           </button>
-          <FiLink className="text-lg cursor-pointer" />
-          <button className={`${currentTheme.headerColor} text-white px-4 py-1 rounded`}>
+          <FaLink className="text-lg cursor-pointer" />
+          <button className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded`}>
             Publish
           </button>
         </div>
       </div>
 
       {/* Form Body */}
-      <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-6">
-        {isPreview ? (
-          <Preview title={title} description={description} questions={questions} />
-        ) : (
-          <>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full text-gray-500 border-none focus:outline-none mt-2"
-            />
-
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToVerticalAxis]}
-            >
-              <SortableContext items={questions} strategy={verticalListSortingStrategy}>
-                {questions.map((question) => (
-                  <SortableQuestion
-                    key={question.id}
-                    question={question}
-                    updateQuestionText={updateQuestionText}
-                    updateOption={updateOption}
-                    addOption={addOption}
-                    removeQuestion={removeQuestion}
-                    toggleRequired={toggleRequired}
-                    duplicateQuestion={duplicateQuestion}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
-
-            {/* Add Question Buttons */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {["text", "number", "radio", "checkbox", "dropdown"].map((type) => (
-                <button
-                  key={type}
-                  onClick={() => addQuestion(type)}
-                  className="flex items-center gap-2 text-blue-600 text-sm border px-3 py-1 rounded-md"
-                >
-                  <FaPlus /> Add {type.charAt(0).toUpperCase() + type.slice(1)}
-                </button>
-              ))}
-            </div>
-
-            {/* Reset Form Button */}
-            <div className="mt-6">
+      <div className="max-w-7xl mx-auto flex gap-6 p-6">
+        {/* Left Side: Buttons Column */}
+        <div className="w-1/4 bg-white p-4 rounded-lg shadow-lg">
+          <h3 className="text-lg font-semibold mb-4">Add a Question</h3>
+          <div className="flex flex-col gap-2">
+            {["text", "number", "radio", "checkbox", "dropdown", "date", "time", "file"].map((type) => (
               <button
-                onClick={resetForm}
-                className="text-red-600 text-sm underline"
+                key={type}
+                onClick={() => addQuestion(type)}
+                className={`flex items-center gap-2 text-white text-sm px-4 py-2 rounded-md ${currentTheme.buttonColor}`}
               >
-                Reset Form
+                <FaPlus /> Add {type.charAt(0).toUpperCase() + type.slice(1)}
               </button>
-            </div>
-          </>
-        )}
+            ))}
+          </div>
+
+          {/* Reset Form Button */}
+          <div className="mt-6">
+            <button
+              onClick={resetForm}
+              className="text-red-600 text-sm underline"
+            >
+              Reset Form
+            </button>
+          </div>
+        </div>
+
+        {/* Right Side: Questions */}
+        <div className="w-3/4 bg-white p-6 rounded-lg shadow-lg">
+          {isPreview ? (
+            <Preview title={title} description={description} questions={questions} />
+          ) : (
+            <>
+              {/* Form Title and Description */}
+              <div className="mb-6">
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full text-2xl font-bold border-none focus:outline-none mb-2"
+                />
+                <input
+                  type="text"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full text-gray-500 border-none focus:outline-none"
+                />
+              </div>
+
+              {/* Questions List */}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+                modifiers={[restrictToVerticalAxis]}
+              >
+                <SortableContext items={questions} strategy={verticalListSortingStrategy}>
+                  {questions.map((question) => (
+                    <SortableQuestion
+                      key={question.id}
+                      question={question}
+                      updateQuestionText={updateQuestionText}
+                      updateOption={updateOption}
+                      addOption={addOption}
+                      removeQuestion={removeQuestion}
+                      toggleRequired={toggleRequired}
+                      duplicateQuestion={duplicateQuestion}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
