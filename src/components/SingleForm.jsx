@@ -68,6 +68,31 @@ const SingleForm = () => {
     navigate("/forms"); // Redirect to the forms list after saving
   };
 
+  // Publish form
+  const publishForm = () => {
+    const formData = {
+      id: formId,
+      title,
+      description,
+      questions,
+      theme,
+      published: true, // Mark the form as published
+      link: `http://localhost:5173/respond/${formId}`, // Unique link for the form
+    };
+
+    const publishedForms = JSON.parse(localStorage.getItem("publishedForms")) || [];
+    const existingFormIndex = publishedForms.findIndex((form) => form.id === formId);
+
+    if (existingFormIndex !== -1) {
+      publishedForms[existingFormIndex] = formData; // Update existing published form
+    } else {
+      publishedForms.push(formData); // Add new published form
+    }
+
+    localStorage.setItem("publishedForms", JSON.stringify(publishedForms));
+    alert("Form published successfully! Share this link: " + formData.link);
+  };
+
   // Add a new question
   const addQuestion = (type) => {
     const newQuestion = {
@@ -230,6 +255,7 @@ const SingleForm = () => {
 
           {/* Publish Button */}
           <button
+            onClick={publishForm} // Call publishForm when clicked
             className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded`}
           >
             Publish

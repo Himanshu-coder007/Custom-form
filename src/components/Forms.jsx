@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Forms = () => {
@@ -43,12 +43,12 @@ const Forms = () => {
         </Link>
       </div>
       <input
-  type="text"
-  placeholder="Search forms..."
-  value={searchQuery}
-  onChange={(e) => setSearchQuery(e.target.value)}
-  className="w-[20%] p-3 mb-6 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 placeholder-gray-400 shadow-sm hover:border-gray-400"
-/>
+        type="text"
+        placeholder="Search forms..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-[20%] p-3 mb-6 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 placeholder-gray-400 shadow-sm hover:border-gray-400"
+      />
       {currentForms.length === 0 ? (
         <p className="text-gray-600">No forms found.</p>
       ) : (
@@ -72,6 +72,12 @@ const Forms = () => {
                   >
                     <FaTrash /> Delete
                   </button>
+                  <Link
+                    to={`/responses/${form.id}`}
+                    className="flex items-center gap-2 text-green-600 hover:text-green-700 transition-all duration-300"
+                  >
+                    <FaEye /> View Responses
+                  </Link>
                 </div>
               </div>
             ))}
