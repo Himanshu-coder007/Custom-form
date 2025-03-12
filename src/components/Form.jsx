@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
-import { FiEye, FiLink } from "react-icons/fi";
+import { FiEye, FiLink, FiEdit } from "react-icons/fi";
 import { MdOutlinePalette } from "react-icons/md";
 import {
   DndContext,
@@ -18,6 +18,7 @@ import {
 } from "@dnd-kit/sortable";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import SortableQuestion from "./SortableQuestion";
+import Preview from "./Preview"; // Import the Preview component
 
 const Form = () => {
   const [title, setTitle] = useState("Untitled Form");
@@ -31,6 +32,7 @@ const Form = () => {
       required: false,
     },
   ]);
+  const [isPreview, setIsPreview] = useState(false); // State to toggle between edit and preview modes
 
   // Save form state to localStorage
   useEffect(() => {
@@ -161,7 +163,13 @@ const Form = () => {
         </div>
         <div className="flex items-center gap-6 text-gray-600">
           <MdOutlinePalette className="text-lg cursor-pointer" />
-          <FiEye className="text-lg cursor-pointer" />
+          {/* Toggle between Edit and Preview modes */}
+          <button
+            onClick={() => setIsPreview(!isPreview)}
+            className="text-lg cursor-pointer"
+          >
+            {isPreview ? <FiEdit /> : <FiEye />}
+          </button>
           <FiLink className="text-lg cursor-pointer" />
           <button className="bg-purple-600 text-white px-4 py-1 rounded">
             Publish
@@ -171,57 +179,65 @@ const Form = () => {
 
       {/* Form Body */}
       <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-6">
-        <input
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full text-gray-500 border-none focus:outline-none mt-2"
-        />
+        {isPreview ? (
+          // Preview Mode
+          <Preview title={title} description={description} questions={questions} />
+        ) : (
+          // Edit Mode
+          <>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full text-gray-500 border-none focus:outline-none mt-2"
+            />
 
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-          modifiers={[restrictToVerticalAxis]}
-        >
-          <SortableContext items={questions} strategy={verticalListSortingStrategy}>
-            {questions.map((question) => (
-              <SortableQuestion
-                key={question.id}
-                question={question}
-                updateQuestionText={updateQuestionText}
-                updateOption={updateOption}
-                addOption={addOption}
-                removeQuestion={removeQuestion}
-                toggleRequired={toggleRequired}
-                duplicateQuestion={duplicateQuestion}
-              />
-            ))}
-          </SortableContext>
-        </DndContext>
-
-        {/* Add Question Buttons */}
-        <div className="mt-4 flex flex-wrap gap-2">
-          {["text", "number", "radio", "checkbox", "dropdown"].map((type) => (
-            <button
-              key={type}
-              onClick={() => addQuestion(type)}
-              className="flex items-center gap-2 text-blue-600 text-sm border px-3 py-1 rounded-md"
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+              modifiers={[restrictToVerticalAxis]}
             >
-              <FaPlus /> Add {type.charAt(0).toUpperCase() + type.slice(1)}
-            </button>
-          ))}
-        </div>
+              <SortableContext items={questions} strategy={verticalListSortingStrategy}>
+                {questions.map((question) => (
+                  <SortableQuestion
+                    key={question.id}
+                    question={question}
+                    updateQuestionText={updateQuestionText}
+                    updateOption={updateOption}
+                    addOption={addOption}
+                    removeQuestion={removeQuestion}
+                    toggleRequired={toggleRequired}
+                    duplicateQuestion={duplicateQuestion}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
 
-        {/* Reset Form Button */}
-        <div className="mt-6">
-          <button
-            onClick={resetForm}
-            className="text-red-600 text-sm underline"
-          >
-            Reset Form
-          </button>
-        </div>
+            {/* Add Question Buttons */}
+            <div className="mt-4 flex flex-wrap gap-2">
+              {["text", "number", "radio", "checkbox", "dropdown"].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => addQuestion(type)}
+                  className="flex items-center gap-2 text-blue-600 text-sm border px-3 py-1 rounded-md"
+                >
+                  <FaPlus /> Add {type.charAt(0).toUpperCase() + type.slice(1)}
+                </button>
+              ))}
+            </div>
+
+            {/* Reset Form Button */}
+            <div className="mt-6">
+              <button
+                onClick={resetForm}
+                className="text-red-600 text-sm underline"
+              >
+                Reset Form
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
