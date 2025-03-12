@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaPlus, FaTrash, FaCopy, FaPalette, FaEye, FaLink, FaEdit, FaSave } from "react-icons/fa";
+import {
+  FaPlus,
+  FaTrash,
+  FaCopy,
+  FaPalette,
+  FaEye,
+  FaLink,
+  FaEdit,
+  FaSave,
+} from "react-icons/fa";
 import {
   DndContext,
   closestCenter,
@@ -40,11 +49,41 @@ const Form = ({ formId, onSave }) => {
   const dropdownRef = useRef(null);
 
   const themes = [
-    { name: "Purple", value: "purple", bgColor: "bg-purple-100", headerColor: "bg-purple-600", buttonColor: "bg-purple-500 hover:bg-purple-600" },
-    { name: "Blue", value: "blue", bgColor: "bg-blue-100", headerColor: "bg-blue-600", buttonColor: "bg-blue-500 hover:bg-blue-600" },
-    { name: "Green", value: "green", bgColor: "bg-green-100", headerColor: "bg-green-600", buttonColor: "bg-green-500 hover:bg-green-600" },
-    { name: "Red", value: "red", bgColor: "bg-red-100", headerColor: "bg-red-600", buttonColor: "bg-red-500 hover:bg-red-600" },
-    { name: "Indigo", value: "indigo", bgColor: "bg-indigo-100", headerColor: "bg-indigo-600", buttonColor: "bg-indigo-500 hover:bg-indigo-600" },
+    {
+      name: "Purple",
+      value: "purple",
+      bgColor: "bg-purple-100",
+      headerColor: "bg-purple-600",
+      buttonColor: "bg-purple-500 hover:bg-purple-600",
+    },
+    {
+      name: "Blue",
+      value: "blue",
+      bgColor: "bg-blue-100",
+      headerColor: "bg-blue-600",
+      buttonColor: "bg-blue-500 hover:bg-blue-600",
+    },
+    {
+      name: "Green",
+      value: "green",
+      bgColor: "bg-green-100",
+      headerColor: "bg-green-600",
+      buttonColor: "bg-green-500 hover:bg-green-600",
+    },
+    {
+      name: "Red",
+      value: "red",
+      bgColor: "bg-red-100",
+      headerColor: "bg-red-600",
+      buttonColor: "bg-red-500 hover:bg-red-600",
+    },
+    {
+      name: "Indigo",
+      value: "indigo",
+      bgColor: "bg-indigo-100",
+      headerColor: "bg-indigo-600",
+      buttonColor: "bg-indigo-500 hover:bg-indigo-600",
+    },
   ];
 
   // Load form data if formId is provided
@@ -76,7 +115,9 @@ const Form = ({ formId, onSave }) => {
     console.log("Form Data to Save:", formData); // Debugging
 
     const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
-    const existingFormIndex = savedForms.findIndex((form) => form.id === formData.id);
+    const existingFormIndex = savedForms.findIndex(
+      (form) => form.id === formData.id
+    );
 
     if (existingFormIndex !== -1) {
       savedForms[existingFormIndex] = formData; // Update existing form
@@ -275,11 +316,6 @@ const Form = ({ formId, onSave }) => {
             className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded flex items-center gap-2`}
           >
             <FaSave /> Save
-          </button>
-          <button
-            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded`}
-          >
-            Publish
           </button>
         </div>
       </div>
