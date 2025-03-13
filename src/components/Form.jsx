@@ -223,7 +223,7 @@ const publishForm = () => {
 
   setIsPublished(true); // Update published status in state
   // setPublishedLink(`http://localhost:5173/respond/${formData.id}`); // Set the published link
-  setPublishedLink(`https://vercel.com/himanshucoder007s-projects/custom-form/33DKpbhq2KGDgaj3p2UGKfuPxKoB/${formData.id}`);
+  setPublishedLink(`https://custom-form-lilac.vercel.app/respond/${formData.id}`);
   alert("Form published successfully!");
 };
 
