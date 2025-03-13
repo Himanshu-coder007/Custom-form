@@ -222,7 +222,8 @@ const publishForm = () => {
   localStorage.setItem("forms", JSON.stringify(savedForms));
 
   setIsPublished(true); // Update published status in state
-  setPublishedLink(`http://localhost:5173/respond/${formData.id}`); // Set the published link
+  // setPublishedLink(`http://localhost:5173/respond/${formData.id}`); // Set the published link
+  setPublishedLink(`https://custom-form-lilac.vercel.app/respond/${formData.id}`);
   alert("Form published successfully!");
 };
 
