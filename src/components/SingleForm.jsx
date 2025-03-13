@@ -131,7 +131,8 @@ const SingleForm = () => {
       questions,
       theme,
       published: true, // Mark the form as published
-      link: `http://localhost:5173/respond/${formId}`, // Unique link for the form
+      // link: `http://localhost:5173/respond/${formId}`, // Unique link for the form
+      link: `https://custom-form-lilac.vercel.app/respond/${formId}`,
     };
 
     const publishedForms =
