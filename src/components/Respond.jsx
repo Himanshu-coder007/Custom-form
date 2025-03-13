@@ -44,6 +44,7 @@ const Respond = () => {
   const [form, setForm] = useState(null);
   const [responses, setResponses] = useState({});
   const [theme, setTheme] = useState(null);
+  const [errors, setErrors] = useState({}); // To track validation errors
 
   // Load the published form
   useEffect(() => {
@@ -66,6 +67,13 @@ const Respond = () => {
       ...prev,
       [questionId]: value,
     }));
+    // Clear error for the field when it is filled
+    if (errors[questionId]) {
+      setErrors((prev) => ({
+        ...prev,
+        [questionId]: "",
+      }));
+    }
   };
 
   // Handle file upload
@@ -74,10 +82,34 @@ const Respond = () => {
       ...prev,
       [questionId]: files,
     }));
+    // Clear error for the field when it is filled
+    if (errors[questionId]) {
+      setErrors((prev) => ({
+        ...prev,
+        [questionId]: "",
+      }));
+    }
+  };
+
+  // Validate required fields
+  const validateForm = () => {
+    const newErrors = {};
+    form.questions.forEach((question) => {
+      if (question.required && !responses[question.id]) {
+        newErrors[question.id] = "This field is required";
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
   // Submit the form responses
   const submitResponses = () => {
+    if (!validateForm()) {
+      alert("Please fill out all required fields before submitting.");
+      return;
+    }
+
     const formResponses = {
       formId,
       responses,
@@ -109,20 +141,26 @@ const Respond = () => {
               {question.text} {question.required && <span className="text-red-500">*</span>}
             </label>
             {question.type === "text" && (
-              <input
-                type="text"
-                onChange={(e) => handleResponseChange(question.id, e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required={question.required}
-              />
+              <>
+                <input
+                  type="text"
+                  onChange={(e) => handleResponseChange(question.id, e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required={question.required}
+                />
+                {errors[question.id] && <p className="text-red-500 text-sm mt-1">{errors[question.id]}</p>}
+              </>
             )}
             {question.type === "number" && (
-              <input
-                type="number"
-                onChange={(e) => handleResponseChange(question.id, e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required={question.required}
-              />
+              <>
+                <input
+                  type="number"
+                  onChange={(e) => handleResponseChange(question.id, e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required={question.required}
+                />
+                {errors[question.id] && <p className="text-red-500 text-sm mt-1">{errors[question.id]}</p>}
+              </>
             )}
             {question.type === "radio" && (
               <div className="space-y-2">
@@ -139,6 +177,7 @@ const Respond = () => {
                     {option}
                   </label>
                 ))}
+                {errors[question.id] && <p className="text-red-500 text-sm mt-1">{errors[question.id]}</p>}
               </div>
             )}
             {question.type === "checkbox" && (
@@ -161,46 +200,59 @@ const Respond = () => {
                     {option}
                   </label>
                 ))}
+                {errors[question.id] && <p className="text-red-500 text-sm mt-1">{errors[question.id]}</p>}
               </div>
             )}
             {question.type === "dropdown" && (
-              <select
-                onChange={(e) => handleResponseChange(question.id, e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required={question.required}
-              >
-                <option value="">Select an option</option>
-                {question.options.map((option, index) => (
-                  <option key={index} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              <>
+                <select
+                  onChange={(e) => handleResponseChange(question.id, e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required={question.required}
+                >
+                  <option value="">Select an option</option>
+                  {question.options.map((option, index) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {errors[question.id] && <p className="text-red-500 text-sm mt-1">{errors[question.id]}</p>}
+              </>
             )}
             {question.type === "date" && (
-              <input
-                type="date"
-                onChange={(e) => handleResponseChange(question.id, e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required={question.required}
-              />
+              <>
+                <input
+                  type="date"
+                  onChange={(e) => handleResponseChange(question.id, e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required={question.required}
+                />
+                {errors[question.id] && <p className="text-red-500 text-sm mt-1">{errors[question.id]}</p>}
+              </>
             )}
             {question.type === "time" && (
-              <input
-                type="time"
-                onChange={(e) => handleResponseChange(question.id, e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required={question.required}
-              />
+              <>
+                <input
+                  type="time"
+                  onChange={(e) => handleResponseChange(question.id, e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required={question.required}
+                />
+                {errors[question.id] && <p className="text-red-500 text-sm mt-1">{errors[question.id]}</p>}
+              </>
             )}
             {question.type === "file" && (
-              <input
-                type="file"
-                onChange={(e) => handleFileUpload(question.id, e.target.files)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required={question.required}
-                multiple={question.multiple || false}
-              />
+              <>
+                <input
+                  type="file"
+                  onChange={(e) => handleFileUpload(question.id, e.target.files)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required={question.required}
+                  multiple={question.multiple || false}
+                />
+                {errors[question.id] && <p className="text-red-500 text-sm mt-1">{errors[question.id]}</p>}
+              </>
             )}
           </div>
         ))}
