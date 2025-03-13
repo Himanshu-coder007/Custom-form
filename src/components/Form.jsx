@@ -221,7 +221,7 @@ const publishForm = () => {
   localStorage.setItem("forms", JSON.stringify(savedForms));
 
   setIsPublished(true); // Update published status in state
-  setPublishedLink(`http://localhost:5147/respond/${formData.id}`); // Set the published link
+  setPublishedLink(`http://localhost:5173/respond/${formData.id}`); // Set the published link
   alert("Form published successfully!");
 };
 
