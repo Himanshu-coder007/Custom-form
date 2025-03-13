@@ -108,6 +108,7 @@ useEffect(() => {
 
     localStorage.setItem("forms", JSON.stringify(savedForms));
     if (onSave) onSave();
+    alert("Form saved successfully");
   };
 
   // Close dropdown when clicking outside
@@ -410,13 +411,13 @@ const copyLinkToClipboard = () => {
 
           <button
             onClick={saveForm}
-            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded flex items-center gap-2`}
+            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded flex items-center gap-2 cursor-pointer`}
           >
             <FaSave /> Save
           </button>
           <button
             onClick={publishForm}
-            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded`}
+            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded cursor-pointer`}
             disabled={isPublished} // Disable if already published
           >
             {isPublished ? "Published" : "Publish"}
@@ -444,7 +445,7 @@ const copyLinkToClipboard = () => {
                 <button
                   key={type}
                   onClick={() => addQuestion(type)}
-                  className={`flex items-center gap-2 text-white text-sm px-4 py-2 rounded-md ${currentTheme.buttonColor}`}
+                  className={`flex items-center gap-2 text-white text-sm px-4 py-2 cursor-pointer rounded-md ${currentTheme.buttonColor}`}
                 >
                   <FaPlus /> Add {type.charAt(0).toUpperCase() + type.slice(1)}
                 </button>
@@ -455,7 +456,7 @@ const copyLinkToClipboard = () => {
             <div className="mt-6">
               <button
                 onClick={resetForm}
-                className="text-red-600 text-sm underline"
+                className="text-red-600 text-sm underline cursor-pointer"
               >
                 Reset Form
               </button>

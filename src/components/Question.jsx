@@ -123,7 +123,7 @@ const Question = ({
           {/* Duplicate Question */}
           <button
             onClick={() => duplicateQuestion(question)}
-            className="text-gray-500 hover:text-blue-500"
+            className="text-gray-500 hover:text-blue-500 cursor-pointer" 
           >
             <FaRegCopy />
           </button>
@@ -131,7 +131,7 @@ const Question = ({
           {/* Remove Question */}
           <button
             onClick={() => removeQuestion(question.id)}
-            className="text-red-500 hover:text-red-700"
+            className="text-red-500 hover:text-red-700 cursor-pointer"
           >
             <FaTrash />
           </button>
@@ -142,7 +142,7 @@ const Question = ({
             onChange={() => toggleRequired(question.id)}
             className={`${
               question.required ? "bg-blue-500" : "bg-gray-300"
-            } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+            } relative inline-flex h-6 w-11 items-center rounded-full transition cursor-pointer`}
           >
             <span className="sr-only">Required</span>
             <span
