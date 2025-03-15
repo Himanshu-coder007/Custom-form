@@ -150,6 +150,7 @@ const SingleForm = () => {
     localStorage.setItem("publishedForms", JSON.stringify(publishedForms));
 
     setPublishedLink(formData.link); // Set the published link in state
+    console.log(formData.link);
     alert("Form published successfully! Share this link: " + formData.link);
   };
 
