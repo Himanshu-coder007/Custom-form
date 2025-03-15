@@ -85,6 +85,10 @@ useEffect(() => {
   }
 }, [formId]);
 
+useEffect(() => {
+  console.log("Published link updated:", publishedLink);
+}, [publishedLink]);
+
   // Save form to local storage
   const saveForm = () => {
     const formData = {
