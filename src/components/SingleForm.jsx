@@ -432,7 +432,7 @@ const SingleForm = () => {
         {/* Left Side: Buttons Column (Hidden in Preview Mode) */}
         {!isPreview && (
           <div className="w-1/4 bg-white p-4 rounded-lg shadow-lg sticky top-0 h-screen overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">Add a Question</h3>
+            <h3 className="text-lg font-semibold mb-4 ">Add a Question</h3>
             <div className="flex flex-col gap-2">
               {[
                 "text",
@@ -447,7 +447,7 @@ const SingleForm = () => {
                 <button
                   key={type}
                   onClick={() => addQuestion(type)}
-                  className={`flex items-center gap-2 text-white text-sm px-4 py-2 rounded-md ${currentTheme.buttonColor}`}
+                  className={`flex items-center gap-2 text-white text-sm px-4 py-2 rounded-md cursor-pointer ${currentTheme.buttonColor}`}
                 >
                   <FaPlus /> Add {type.charAt(0).toUpperCase() + type.slice(1)}
                 </button>
