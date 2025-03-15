@@ -186,6 +186,71 @@ useEffect(() => {
   // };
 
   // Publish the form
+// const publishForm = () => {
+//   if (!title || !description || questions.length === 0) {
+//     alert("Please add a title, description, and at least one question before publishing.");
+//     return;
+//   }
+
+//   const formData = {
+//     id: formId || Date.now().toString(),
+//     title,
+//     description,
+//     questions,
+//     theme,
+//     published: true, // Mark as published
+//   };
+
+//   // Save to publishedForms
+//   const publishedForms = JSON.parse(localStorage.getItem("publishedForms")) || [];
+//   const existingFormIndex = publishedForms.findIndex((form) => form.id === formData.id);
+
+//   if (existingFormIndex !== -1) {
+//     publishedForms[existingFormIndex] = formData; // Update existing published form
+//   } else {
+//     publishedForms.push(formData); // Add new published form
+//   }
+
+//   localStorage.setItem("publishedForms", JSON.stringify(publishedForms));
+
+//   // Save to forms (to update published status)
+//   const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
+//   const existingFormIndexInForms = savedForms.findIndex((form) => form.id === formData.id);
+
+//   if (existingFormIndexInForms !== -1) {
+//     savedForms[existingFormIndexInForms] = formData; // Update existing form
+//   } else {
+//     savedForms.push(formData); // Add new form
+//   }
+
+//   localStorage.setItem("forms", JSON.stringify(savedForms));
+
+//   setIsPublished(true); // Update published status in state
+//   setPublishedLink(`http://localhost:5173/respond/${formData.id}`); // Set the published link
+  
+//   alert("Form published successfully!");
+// };
+
+  // Copy the published link to clipboard
+  // const copyLinkToClipboard = () => {
+  //   if (publishedLink) {
+  //     navigator.clipboard.writeText(publishedLink);
+  //     alert("Link copied to clipboard!");
+  //   } else {
+  //     alert("Form is not published yet.");
+  //   }
+  // };
+  // Copy the published link to clipboard
+// const copyLinkToClipboard = () => {
+//   if (isPublished && publishedLink) {
+//     navigator.clipboard.writeText(publishedLink);
+//     alert("Link copied to clipboard!");
+//   } else {
+//     alert("Form is not published yet.");
+//   }
+// };
+
+// Publish the form
 const publishForm = () => {
   if (!title || !description || questions.length === 0) {
     alert("Please add a title, description, and at least one question before publishing.");
@@ -201,7 +266,7 @@ const publishForm = () => {
     published: true, // Mark as published
   };
 
-  // Save to publishedForms
+  // Retrieve existing published forms
   const publishedForms = JSON.parse(localStorage.getItem("publishedForms")) || [];
   const existingFormIndex = publishedForms.findIndex((form) => form.id === formData.id);
 
@@ -225,30 +290,31 @@ const publishForm = () => {
 
   localStorage.setItem("forms", JSON.stringify(savedForms));
 
+  // Dynamically generate the published link
+  const hostUrl = window.location.origin;
+  const formUrl = `${hostUrl}/respond/${formData.id}`;
+  setPublishedLink(formUrl);
+
   setIsPublished(true); // Update published status in state
-  setPublishedLink(`http://localhost:5173/respond/${formData.id}`); // Set the published link
   
-  alert("Form published successfully!");
+  alert(`Form published successfully!\nLink: ${formUrl}`);
 };
 
-  // Copy the published link to clipboard
-  // const copyLinkToClipboard = () => {
-  //   if (publishedLink) {
-  //     navigator.clipboard.writeText(publishedLink);
-  //     alert("Link copied to clipboard!");
-  //   } else {
-  //     alert("Form is not published yet.");
-  //   }
-  // };
-  // Copy the published link to clipboard
-const copyLinkToClipboard = () => {
+// Copy the published link to clipboard
+const copyLinkToClipboard = async () => {
   if (isPublished && publishedLink) {
-    navigator.clipboard.writeText(publishedLink);
-    alert("Link copied to clipboard!");
+    try {
+      await navigator.clipboard.writeText(publishedLink);
+      alert("Link copied to clipboard!");
+    } catch (err) {
+      console.error("Failed to copy link: ", err);
+      alert("Failed to copy link. Please try again.");
+    }
   } else {
     alert("Form is not published yet.");
   }
 };
+
 
   useEffect(() => {
     localStorage.setItem(

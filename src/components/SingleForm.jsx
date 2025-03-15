@@ -127,6 +127,37 @@ const SingleForm = () => {
   //     localStorage.setItem("publishedForms", JSON.stringify(publishedForms));
   //     alert("Form published successfully! Share this link: " + formData.link);
   //   };
+  // const publishForm = () => {
+  //   const formData = {
+  //     id: formId,
+  //     title,
+  //     description,
+  //     questions,
+  //     theme,
+  //     published: true, // Mark the form as published
+  //     link: `https://custom-form-lilac.vercel.app/respond/${formId}`, // Unique link for the form
+      
+  //   };
+
+  //   const publishedForms =
+  //     JSON.parse(localStorage.getItem("publishedForms")) || [];
+  //   const existingFormIndex = publishedForms.findIndex(
+  //     (form) => form.id === formId
+  //   );
+
+  //   if (existingFormIndex !== -1) {
+  //     publishedForms[existingFormIndex] = formData; // Update existing published form
+  //   } else {
+  //     publishedForms.push(formData); // Add new published form
+  //   }
+
+  //   localStorage.setItem("publishedForms", JSON.stringify(publishedForms));
+
+  //   setPublishedLink(formData.link); // Set the published link in state
+  //   console.log(formData.link);
+  //   alert("Form published successfully! Share this link: " + formData.link);
+  // };
+
   const publishForm = () => {
     const formData = {
       id: formId,
@@ -134,38 +165,51 @@ const SingleForm = () => {
       description,
       questions,
       theme,
-      published: true, // Mark the form as published
-      link: `https://custom-form-lilac.vercel.app/respond/${formId}`, // Unique link for the form
-      
+      published: true,
+      link: `https://custom-form-lilac.vercel.app/respond/${formId}`, // Correct link
     };
-
-    const publishedForms =
-      JSON.parse(localStorage.getItem("publishedForms")) || [];
-    const existingFormIndex = publishedForms.findIndex(
-      (form) => form.id === formId
-    );
-
+  
+    const publishedForms = JSON.parse(localStorage.getItem("publishedForms")) || [];
+    const existingFormIndex = publishedForms.findIndex((form) => form.id === formId);
+  
     if (existingFormIndex !== -1) {
-      publishedForms[existingFormIndex] = formData; // Update existing published form
+      publishedForms[existingFormIndex] = formData;
     } else {
-      publishedForms.push(formData); // Add new published form
+      publishedForms.push(formData);
     }
-
+  
     localStorage.setItem("publishedForms", JSON.stringify(publishedForms));
-
-    setPublishedLink(formData.link); // Set the published link in state
-    console.log(formData.link);
+  
+    // **Ensure publishedLink state updates**
+    setPublishedLink(formData.link);
+    
+    console.log("Published link set to:", formData.link); // Debugging log
     alert("Form published successfully! Share this link: " + formData.link);
   };
+  
+
+  // const copyLinkToClipboard = () => {
+  //   if (publishedLink) {
+  //     navigator.clipboard.writeText(publishedLink);
+  //     alert("Link copied to clipboard: " + publishedLink);
+  //   } else {
+  //     alert("Form is not published yet.");
+  //   }
+  // };
 
   const copyLinkToClipboard = () => {
-    if (publishedLink) {
-      navigator.clipboard.writeText(publishedLink);
-      alert("Link copied to clipboard: " + publishedLink);
+    // Fetch latest publishedForms to ensure correct link is copied
+    const publishedForms = JSON.parse(localStorage.getItem("publishedForms")) || [];
+    const publishedForm = publishedForms.find((form) => form.id === formId);
+    
+    if (publishedForm && publishedForm.link) {
+      navigator.clipboard.writeText(publishedForm.link);
+      alert("Link copied to clipboard: " + publishedForm.link);
     } else {
       alert("Form is not published yet.");
     }
   };
+  
 
   // Add a new question
   const addQuestion = (type) => {
