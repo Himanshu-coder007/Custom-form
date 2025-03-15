@@ -412,7 +412,7 @@ const SingleForm = () => {
           {/* Publish Button */}
           <button
             onClick={publishForm} // Call publishForm when clicked
-            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded`}
+            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded cursor-pointer`}
           >
             Publish
           </button>
@@ -420,7 +420,7 @@ const SingleForm = () => {
           {/* Save Button */}
           <button
             onClick={saveForm}
-            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded flex items-center gap-2`}
+            className={`${currentTheme.buttonColor} text-white px-4 py-1 rounded flex items-center gap-2 cursor-pointer`}
           >
             <FaSave /> Save
           </button>
