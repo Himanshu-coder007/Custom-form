@@ -65,6 +65,26 @@ const Form = ({ formId, onSave }) => {
   //   }
   // }, [formId]);
   // Load form data if formId is provided
+// useEffect(() => {
+//   if (formId) {
+//     const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
+//     const formToEdit = savedForms.find((form) => form.id === formId);
+
+//     if (formToEdit) {
+//       setTitle(formToEdit.title);
+//       setDescription(formToEdit.description);
+//       setQuestions(formToEdit.questions || []);
+//       setTheme(formToEdit.theme || "purple");
+//       setIsPublished(formToEdit.published || false);
+
+//       // Set the published link if the form is already published
+//       if (formToEdit.published) {
+//         setPublishedLink(`https://custom-form-lilac.vercel.app/respond/${formId}`);
+//       }
+//     }
+//   }
+// }, [formId]);
+
 useEffect(() => {
   if (formId) {
     const savedForms = JSON.parse(localStorage.getItem("forms")) || [];
@@ -77,13 +97,30 @@ useEffect(() => {
       setTheme(formToEdit.theme || "purple");
       setIsPublished(formToEdit.published || false);
 
-      // Set the published link if the form is already published
       if (formToEdit.published) {
         setPublishedLink(`https://custom-form-lilac.vercel.app/respond/${formId}`);
       }
     }
+  } else {
+    // Reset state for a new form
+    setTitle("Untitled Form");
+    setDescription("Form description");
+    setQuestions([
+      {
+        id: Date.now().toString(),
+        type: "text",
+        text: "Untitled Question",
+        options: [],
+        required: false,
+      },
+    ]);
+    setTheme("purple");
+    setIsPublished(false);
+    setPublishedLink("");
+    localStorage.removeItem("formState"); // Clear any saved draft
   }
 }, [formId]);
+
 
 useEffect(() => {
   console.log("Published link updated:", publishedLink);
