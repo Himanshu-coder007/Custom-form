@@ -79,7 +79,7 @@ useEffect(() => {
 
       // Set the published link if the form is already published
       if (formToEdit.published) {
-        setPublishedLink(`http://localhost:5147/respond/${formId}`);
+        setPublishedLink(`https://custom-form-lilac.vercel.app/respond/${formId}`);
       }
     }
   }
@@ -222,8 +222,8 @@ const publishForm = () => {
   localStorage.setItem("forms", JSON.stringify(savedForms));
 
   setIsPublished(true); // Update published status in state
-  // setPublishedLink(`http://localhost:5173/respond/${formData.id}`); // Set the published link
-  setPublishedLink(`https://custom-form-lilac.vercel.app/respond/${formData.id}`);
+  setPublishedLink(`http://localhost:5173/respond/${formData.id}`); // Set the published link
+  
   alert("Form published successfully!");
 };
 
